@@ -34,9 +34,10 @@ html, body {
 }
 
 .CardCyan::after {
-  background: radial-gradient(circle at center, rgb(8 145 178), #06b6d4);
+  background: radial-gradient(circle at center, #0e7490, #06b6d4);
 }
 
 .CardCyanBg {
-  background: radial-gradient(circle at center, rgb(8 145 178), #06b6d4);
+  background: radial-gradient(circle at center, #0e7490, #06b6d4);
+  /* @apply rounded-full; */
 }

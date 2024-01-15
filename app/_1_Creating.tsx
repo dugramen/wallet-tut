@@ -20,6 +20,7 @@ export default function Creating({
   console.log(cardRef?.getClientRects(), cardRef?.getBoundingClientRect());
   const [cardLoaded, setCardLoaded] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [backupPhase, setBackupPhase] = useState(false);
 
   const [circleSpawnsPos, setCircleSpawnsPos] = useState([[0.5, 0.5]]);
 
@@ -42,6 +43,8 @@ export default function Creating({
   }, [cardLoaded]);
 
   const gridColor = "#ffffff";
+
+  const cardRect = cardRef?.getBoundingClientRect()
 
   return (
     <div
@@ -134,7 +137,7 @@ export default function Creating({
           className={twMerge(
             "CardCyan",
             "absolute inset-0 rounded-3xl transition-all duration-500",
-            `after:absolute after:inset-0 after:rounded-3xl after:transition-all after:duration-[1s] after:delay-500  after:opacity-0`,
+            `after:absolute after:inset-0 after:rounded-3xl after:transition-all after:duration-[.5s] after:delay-500  after:opacity-0`,
             cardLoaded ? "translate-y-1  after:opacity-100" : "-translate-y-0"
           )}
           style={{
@@ -159,7 +162,36 @@ export default function Creating({
 
       <div>Doing some cryptographic magic...</div>
 
-      <Transition in={popupOpen} timeout={0} mountOnEnter unmountOnExit>
+      <Transition in={backupPhase} timeout={500} mountOnEnter unmountOnExit>
+        {(bupState) => (
+          <div
+            className="CardCyanBg fixed transition-all duration-500 rounded-3xl"
+            style={{
+              transform: bupState === "entered" ? "rotateY(.5turn)" : "",
+              opacity: bupState === "entered" ? 100 : 0,
+              top: cardRect?.top,
+              bottom: cardRect?.bottom,
+              left: cardRect?.left,
+              right: cardRect?.right,
+              width: cardRect?.width,
+              height: cardRect?.height,
+              transition: `
+                all .5s,
+                opaacity .2s .3s
+              `
+            }}
+          >
+            <CardContent/>
+          </div>
+        )}
+      </Transition>
+
+      <Transition
+        in={popupOpen && !backupPhase}
+        timeout={popupOpen && !backupPhase ? 0 : 500}
+        mountOnEnter
+        unmountOnExit
+      >
         {(cardState) => (
           <Popup
             state={cardState}
@@ -167,6 +199,9 @@ export default function Creating({
             left={cardRef?.getBoundingClientRect().left}
             right={cardRef?.getBoundingClientRect().right}
             bottom={cardRef?.getBoundingClientRect().bottom}
+            // onClose={() => {
+            //   setBackupPhase(true);
+            // }}
           />
         )}
       </Transition>
