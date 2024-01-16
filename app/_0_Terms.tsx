@@ -70,7 +70,7 @@ export default function Terms({ onAccept = () => {}, state = "unmounted" as Tran
 
         <button
           className={twMerge(`
-              bg-cyan-800 text-cyan-200 text-xl disabled:opacity-50
+              bg-cyan-800 text-cyan-100 text-xl disabled:opacity-50
               transition-all duration-300
               px-8 py-2 rounded-full
               active:scale-95
@@ -104,12 +104,12 @@ function useCheckBox(text: string) {
         `)}
       >
         <div
-          className="absolute -inset-[2px] bg-cyan-800 rounded-lg transition-all duration-500 ease-out text-cyan-200 grid place-content-center"
+          className="absolute -inset-[2px] bg-cyan-800 rounded-lg transition-all duration-500 ease-out text-cyan-100 grid place-content-center"
           style={{
             clipPath: checked ? "circle(110%)" : "circle(0%)",
           }}
         >
-          <FaCheck />
+          <FaCheck className={twMerge('transition-all duration-300', !checked && "translate-y-2")}/>
         </div>
       </div>
 
