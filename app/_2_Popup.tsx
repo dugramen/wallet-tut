@@ -99,7 +99,7 @@ export function Popup(p: {
           >
             <CardContent
               className={twMerge(
-                "transition-all duration-500",
+                "transition-all duration-500 p-[18px]",
                 isFirstState ? "opacity-0 scale-125" : "opacity-100"
               )}
               onClick={() => setPage(4)}

@@ -26,16 +26,19 @@ export default function Creating({
 
   useEffect(() => {
     setTimeout(() => {
+      setCircleSpawnsPos([])
       setCardLoaded(true);
-    }, 3000);
+    }, 2000);
     const interval = setInterval(() => {
       if (!cardLoaded) {
         setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
+        // setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
+        // setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
       }
-    }, 75);
+    }, 10);
     setTimeout(() => {
       clearInterval(interval);
-    }, 1200);
+    }, 200);
 
     return () => {
       clearInterval(interval);
@@ -117,10 +120,10 @@ export default function Creating({
           >
             {circleSpawnsPos.map((pos, i) => (
               <Transition
-                timeout={300}
-                onExited={() => {
-                  setCircleSpawnsPos(([first, ...rest]) => rest);
-                }}
+                timeout={0}
+                // onExited={() => {
+                //   setCircleSpawnsPos(([first, ...rest]) => rest);
+                // }}
                 mountOnEnter
                 unmountOnExit
               >
@@ -213,12 +216,12 @@ function CircleSpawn(props: { state: TransitionStatus; pos: number[] }) {
   return (
     <div
       className={twMerge(
-        "absolute inset-0 transition-all duration-[1s] ease-out delay-1000 bg-cyan-800"
+        "absolute inset-0 transition-all duration-[1s] delay-[1s] ease-out bg-cyan-800"
       )}
       style={{
         clipPath:
           props.state === "entered"
-            ? `circle(50px at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`
+            ? `circle(25px at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`
             : `circle(0 at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`,
         opacity: props.state === "entered" ? "0%" : "100%",
       }}
