@@ -41,3 +41,12 @@ html, body {
   background: radial-gradient(circle at center, #0e7490, #06b6d4);
   /* @apply rounded-full; */
 }
+
+@keyframes squish {
+  50% {
+    transform: scale(.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

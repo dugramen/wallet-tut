@@ -62,7 +62,7 @@ export default function Creating({
           state === "entering"
             ? "h-0 w-0"
             : state === "entered"
-            ? "h-[176px] w-[288px] opacity-100"
+            ? "h-[192px] w-[304px] opacity-100"
             : "",
           cardLoaded ? "scale-110" : "",
           popupOpen && "opacity-0"
@@ -137,7 +137,7 @@ export default function Creating({
           className={twMerge(
             "CardCyan",
             "absolute inset-0 rounded-3xl transition-all duration-500",
-            `after:absolute after:inset-0 after:rounded-3xl after:transition-all after:duration-[.5s] after:delay-500  after:opacity-0`,
+            `after:absolute after:inset-0 after:rounded-3xl after:transition-all after:duration-[.7s] after:delay-300  after:opacity-0`,
             cardLoaded ? "translate-y-1  after:opacity-100" : "-translate-y-0"
           )}
           style={{
@@ -162,10 +162,10 @@ export default function Creating({
 
       <div>Doing some cryptographic magic...</div>
 
-      <Transition in={backupPhase} timeout={500} mountOnEnter unmountOnExit>
+      {/* <Transition in={backupPhase} timeout={300} mountOnEnter unmountOnExit>
         {(bupState) => (
           <div
-            className="CardCyanBg fixed transition-all duration-500 rounded-3xl"
+            className="CardCyanBg fixed transition-all duration-300 rounded-3xl"
             style={{
               transform: bupState === "entered" ? "rotateY(.5turn)" : "",
               opacity: bupState === "entered" ? 100 : 0,
@@ -184,11 +184,11 @@ export default function Creating({
             <CardContent/>
           </div>
         )}
-      </Transition>
+      </Transition> */}
 
       <Transition
-        in={popupOpen && !backupPhase}
-        timeout={popupOpen && !backupPhase ? 0 : 500}
+        in={popupOpen}
+        timeout={popupOpen ? 0 : 500}
         mountOnEnter
         unmountOnExit
       >

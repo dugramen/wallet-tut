@@ -32,7 +32,7 @@ export default function Home() {
       </SwitchTransition> */}
 
       <TransitionGroup>
-        <Transition key={page} timeout={500}>
+        <Transition key={page} timeout={300}>
           {(state) =>
             <div className="absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center p-8">
               {

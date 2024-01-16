@@ -24,6 +24,7 @@
     "@types/react-dom": "^18",
     "@types/react-measure": "^2.0.12",
     "@types/react-transition-group": "^4.4.10",
+    "@xpd/tailwind-3dtransforms": "^1.0.3",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
