@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { FaAngleLeft, FaRegQuestionCircle, FaCheck } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import { Transition, TransitionStatus } from "react-transition-group";
 
 export default function Terms({ onAccept = () => {}, state = "unmounted" as TransitionStatus }) {
   const [page, setPage] = useState(0);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const CheckBoxes = [
     "I understand that i am solely responsible for the security and backup of my wallets, not Family.",
     "I understand that using Family for any illegal purposes is strictly prohibited and against our terms.",
@@ -60,7 +61,11 @@ export default function Terms({ onAccept = () => {}, state = "unmounted" as Tran
       </div>
 
       <div className="flex flex-col gap-4 mb-auto text-xs">
-        {CheckBoxes.map((cb) => cb.component)}
+        {CheckBoxes.map((cb, i) => 
+          <Fragment key={i}>
+            {cb.component}
+          </Fragment> 
+        )}
       </div>
 
       <div className="flex flex-col items-stretch w-full gap-4">
