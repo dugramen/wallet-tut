@@ -50,3 +50,47 @@ html, body {
     transform: scale(1);
   }
 }
+
+@keyframes fade-out {
+  /* 0% {
+    opacity: 50%;
+  } */
+  100% {
+    opacity: 0%;
+  }
+}
+
+@property --card-border-p {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.CardBorderAnimate {
+  --card-border-p: 100%;
+}
+
+.CardBorder {
+  background: conic-gradient(from -.0turn, rgb(209 213 219 / 0.5) var(--card-border-p), transparent var(--card-border-p)) border-box;
+  border: 2px solid transparent;
+  
+  mask: /*4*/
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask: /*4*/
+     linear-gradient(#fff 0 0) padding-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; /*5'*/
+          mask-composite: exclude; /*5*/
+
+  /* transform: scale(1.2); */
+  transition: --card-border-p 1s .5s;
+}
+
+.CardBorder.Active {
+  --card-border-p: 100%;
+}
+
+.CardBorder.Inactive {
+  --card-border-p: 0%
+}

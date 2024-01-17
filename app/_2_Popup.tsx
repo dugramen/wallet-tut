@@ -95,11 +95,11 @@ export function Popup(p: {
           }}
         >
           <div // Card Background
-            className="CardCyanBg absolute inset-0"
+            className="CardCyanBg absolute inset-0 p-[2px]"
           >
             <CardContent
               className={twMerge(
-                "transition-all duration-500 p-[18px]",
+                "transition-all duration-500",
                 isFirstState ? "opacity-0 scale-125" : "opacity-100"
               )}
               onClick={() => setPage(4)}
