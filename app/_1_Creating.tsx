@@ -37,7 +37,7 @@ export default function Creating({
           y: Math.floor(i / wcell) * 16 + 16 - 3,
         }))
         .sort(() => Math.random() - 0.5)
-        .filter((_, i, arr) => i < arr.length / 15)
+        .filter((_, i, arr) => i < arr.length / 3)
         .map(({ x, y }) => {
           const possibles: Point[] = Array(3)
             .fill(0)
@@ -45,8 +45,8 @@ export default function Creating({
               (acc, val, i) => [
                 ...acc,
                 ...[
-                  // { x: x - 16 * (i + 2), y },
-                  // { y: y - 16 * (i + 2), x },
+                  { x: x - 16 * (i + 2), y },
+                  { y: y - 16 * (i + 2), x },
                   { x: x + 16 * (i + 2), y },
                   { y: y + 16 * (i + 2), x },
                 ],
@@ -71,10 +71,10 @@ export default function Creating({
   // const [circleSpawnsPos, setCircleSpawnsPos] = useState([[0.5, 0.5]]);
 
   useEffect(() => {
-    // setTimeout(() => {
-    //   // setCircleSpawnsPos([])
-    //   setCardLoaded(true);
-    // }, 2200);
+    setTimeout(() => {
+      // setCircleSpawnsPos([])
+      setCardLoaded(true);
+    }, 2300);
     // const interval = setInterval(() => {
     //   if (!cardLoaded) {
     //     setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
@@ -133,7 +133,8 @@ export default function Creating({
         <div
           className={twMerge(
             "w-full h-full rounded-3xl CardBorder",
-            state === "entered" ? "Active" : "Inactive"
+            state === "entered" ? "Active" : "Inactive",
+            cardLoaded && 'opacity-0'
           )}
         ></div>
 
@@ -189,37 +190,28 @@ export default function Creating({
             const delay = i * 0.005 + 1;
             let absx = Math.abs(a.end.x - a.start.x)
             let absy = Math.abs(a.end.y - a.start.y)
-            absx = absx > 0 ? absx + 16 : absx
-            absy = absy > 0 ? absy + 16 : absy
+            absx = a.end.x > a.start.x ? absx : absx
+            absy = a.end.y > a.start.y ? absy : absy
             return (
               <div
-                className="absolute inset-0 transition-all duration-500"
+                className="absolute inset-0 transition-all duration-300"
                 style={{
-                  // opacity: state === "entered" ? 0.5 : 0,
+                  opacity: state === "entered" ? 0.25 : 0,
                   transitionDelay: `${delay}s`,
-                  // animation: "fade-out",
-                  // animationDuration: "500ms",
-                  // animationDelay: `${delay + 0.5}s`,
-                  // animationFillMode: "forwards",
+                  animation: "fade-out",
+                  animationDuration: "700ms",
+                  animationDelay: `${delay + .5}s`,
+                  animationFillMode: "forwards",
                 }}
                 key={i}
               >
                 <div
                   key={i}
-                  className="absolute transition-transform duration-[4s] bg-cyan-800"
+                  className="absolute transition-transform duration-[.5s] bg-cyan-800"
                   style={{
-                    // ...(a.end.x < a.start.x
-                    //   ? { right: width - a.start.x - 4 }
-                    //   : { left: a.start.x + 4 }),
-
-                    // ...(a.end.y < a.start.y
-                    //   ? { bottom: height - a.start.y - 4 }
-                    //   : { top: a.start.y + 4 }),
                     left: 4,
                     top: 4,
                     transform:
-                    // ${Math.max(Math.abs(a.end.x - a.start.x), 4)},
-                    // ${Math.max(Math.abs(a.end.y - a.start.y), 4)}
                       state === "entered"
                         ? `
                           translate(
@@ -243,14 +235,6 @@ export default function Creating({
                         `,
                     width: 1,
                     height: 1,
-                    // width:
-                    //   state === "entered"
-                    //     ? Math.max(Math.abs(a.end.x - a.start.x), 4)
-                    //     : 4,
-                    // height:
-                    //   state === "entered"
-                    //     ? Math.max(Math.abs(a.end.y - a.start.y), 4)
-                    //     : 4,
                     background: `linear-gradient(to ${
                       a.end.x - a.start.x > 0
                         ? "left"
@@ -261,13 +245,13 @@ export default function Creating({
                         : a.end.y - a.start.y < 0
                         ? "bottom"
                         : "right"
-                    }, rgb(21 94 117), transparent)`,
+                    }, rgb(21 94 117), rgb(21 94 117), transparent)`,
                     opacity: state === "entered" ? 1 : 0,
                     transitionDelay: `${delay}s`,
                   }}
                 ></div>
                 <div
-                  className="absolute h-2 w-2 bg-cyan-800 transition-transform duration-[4s]"
+                  className="absolute h-[4px] w-[4px] bg-cyan-800 transition-transform duration-[.5s]"
                   style={{
                     transform:
                       state === "entered"
@@ -311,30 +295,6 @@ export default function Creating({
       </div>
 
       <div>Doing some cryptographic magic...</div>
-
-      {/* <Transition in={backupPhase} timeout={300} mountOnEnter unmountOnExit>
-        {(bupState) => (
-          <div
-            className="CardCyanBg fixed transition-all duration-300 rounded-3xl"
-            style={{
-              transform: bupState === "entered" ? "rotateY(.5turn)" : "",
-              opacity: bupState === "entered" ? 100 : 0,
-              top: cardRect?.top,
-              bottom: cardRect?.bottom,
-              left: cardRect?.left,
-              right: cardRect?.right,
-              width: cardRect?.width,
-              height: cardRect?.height,
-              transition: `
-                all .5s,
-                opaacity .2s .3s
-              `
-            }}
-          >
-            <CardContent/>
-          </div>
-        )}
-      </Transition> */}
 
       <Transition
         in={popupOpen}
