@@ -3,7 +3,14 @@
 import { TransitionGroup, TransitionStatus } from "react-transition-group";
 import { twMerge } from "tailwind-merge";
 import { CardContent } from "./_1_Creating";
-import { Fragment, ReactElement, useCallback, useRef, useState } from "react";
+import {
+  Fragment,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useMeasure } from "@uidotdev/usehooks";
 import Measure, { ContentRect } from "react-measure";
 import {
@@ -26,11 +33,12 @@ export function Popup(p: {
   right;
   top;
   left;
-  // onClose: () => any;
+  onClose: () => any;
 }) {
   const [page, setPage] = useState(0);
   const [measures, setMeasures] = useState(Array(6).fill(0));
   const [state, setState] = useState(0);
+  const [final, setFinal] = useState(false);
 
   // console.log(measures);
 
@@ -45,6 +53,15 @@ export function Popup(p: {
     });
 
   const isFirstState = p.state === "entered" && state === 0;
+
+  useEffect(() => {
+    if (state === 1) {
+      setTimeout(() => {
+        p.onClose();
+        setFinal(true);
+      }, 1500);
+    }
+  }, [state]);
 
   return (
     <div
@@ -81,9 +98,10 @@ export function Popup(p: {
                 transform: "rotateY(180deg) translate3d(0, 0, -400px)",
                 transformOrigin: "center center -200px",
                 // perspective: 500,
-                transition: `all 1s 0s, transform 1s 1s`,
+                transition: `all 1s 0s, transform 1s .5s`,
               }
             : {}),
+          ...(final ? { transition: "all .5s" } : {}),
         }}
       >
         <div // Front
@@ -95,11 +113,11 @@ export function Popup(p: {
           }}
         >
           <div // Card Background
-            className="CardCyanBg absolute inset-0 p-[2px]"
+            className="CardCyanBg absolute inset-0"
           >
             <CardContent
               className={twMerge(
-                "transition-all duration-500",
+                "transition-all duration-500 p-5",
                 isFirstState ? "opacity-0 scale-125" : "opacity-100"
               )}
               onClick={() => setPage(4)}
@@ -120,7 +138,7 @@ export function Popup(p: {
                 rounded-[32px] w-[200px] h-[600px] left-[50%] -translate-x-[50%] translate-y-[200px]
                 flex flex-col p-4
               `,
-                isFirstState && 'translate-y-[30px]',
+                isFirstState && "translate-y-[30px]",
                 page >= 1 && page < 4 && "translate-y-[-50px] scale-125",
                 page === 5 && "translate-y-[-50px]",
                 page >= 6 && "translate-y-[200px] opacity-0 duration-700"
@@ -302,8 +320,8 @@ export function Popup(p: {
                           <div
                             className="absolute left-0 top-0 bottom-0 rounded-lg bg-cyan-600 transition-all duration-300"
                             style={{
-                              right: page >= 3 ? '-10px' : '100%',
-                              transitionDelay: `${300 + (i * 50)}ms`
+                              right: page >= 3 ? "-10px" : "100%",
+                              transitionDelay: `${300 + i * 50}ms`,
                             }}
                           />
                         </div>
@@ -347,7 +365,7 @@ export function Popup(p: {
             <div className="overflow-hidden ">
               <div className="flex flex-col gap-4 p-8">
                 <div
-                  className="transition-all duration-500"
+                  className="transition-all duration-500 relative"
                   style={{
                     height: isFirstState ? measures[page] ?? 0 : 0,
                   }}
@@ -414,34 +432,22 @@ export function Popup(p: {
                         with peace of mind, knowing you've saved it safely.
                       </>,
                     ],
-                  ].map(
-                    ([header, body], i) =>
-                      page === i && (
-                        <PanelContent
-                          header={header}
-                          onResize={handlePanelContentResize(i)}
-                          // setPage={setPage}
-                          key={i}
-                        >
-                          {body}
-                        </PanelContent>
-                      )
-                  )}
-
-                  {/* {page === 4 ? (
+                  ].map(([header, body], i) => (
                     <PanelContent
-                      header={<>One last important thing...</>}
-                      onResize={handlePanelContentResize(4)}
-                      setPage={setPage}
+                      header={header}
+                      onResize={handlePanelContentResize(i)}
+                      className={twMerge(
+                        "absolute transition-all duration-300",
+                        page === i && "translate-x-0 opacity-100",
+                        i < page && "translate-x-[-100%] opacity-0",
+                        i > page && "translate-x-[100%] opacity-0"
+                      )}
+                      // setPage={setPage}
+                      key={i}
                     >
-                      We do not know your Secret Recovery Phrase and will never
-                      ask for it. If you lose it, no one, including us, can help
-                      you restore your wallet. So it's essential you{" "}
-                      <span>save it securely</span>.
+                      {body}
                     </PanelContent>
-                  ) : (
-                    <></>
-                  )} */}
+                  ))}
                 </div>
 
                 <button
@@ -472,7 +478,7 @@ export function Popup(p: {
             height: height,
           }}
         >
-          <div className="CardCyanBg inset-0 absolute z-0" />
+          <div className="CardCyanBack inset-0 absolute z-0" />
 
           <div
             className="relative grid gap-x-3 items-center w-full h-full"
@@ -531,14 +537,20 @@ function PanelContent({
   header = "" as any,
   children,
   onResize = (cr: ContentRect) => {},
+  className = "",
   // setPage,
 }) {
   return (
     <Measure bounds onResize={onResize}>
       {({ measureRef }) => (
-        <div className="flex flex-col gap-4" ref={measureRef}>
-          <div className="font-bold text-xl text-gray-800">{header}</div>
-          <div className="font-light">{children}</div>
+        <div
+          className={twMerge("flex flex-col gap-4 PanelContent", className)}
+          ref={measureRef}
+        >
+          <div className="font-bold text-xl text-gray-800 PanelHeader">
+            {header}
+          </div>
+          <div className="font-normal">{children}</div>
         </div>
       )}
     </Measure>
