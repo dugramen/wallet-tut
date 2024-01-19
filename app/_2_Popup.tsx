@@ -33,11 +33,13 @@ export function Popup(p: {
   right;
   top;
   left;
+  finalHeaderPos: [number, number];
   onClose: () => any;
+  onStateChange: (s: 0 | 1) => any
 }) {
   const [page, setPage] = useState(0);
   const [measures, setMeasures] = useState(Array(6).fill(0));
-  const [state, setState] = useState(0);
+  const [state, setState] = useState(0 as 0 | 1);
   const [final, setFinal] = useState(false);
 
   // console.log(measures);
@@ -55,11 +57,15 @@ export function Popup(p: {
   const isFirstState = p.state === "entered" && state === 0;
 
   useEffect(() => {
+    p.onStateChange(state)
+  }, [state])
+
+  useEffect(() => {
     if (state === 1) {
       setTimeout(() => {
         p.onClose();
         setFinal(true);
-      }, 1500);
+      }, 2800);
     }
   }, [state]);
 
@@ -73,6 +79,18 @@ export function Popup(p: {
         perspective: 500,
       }}
     >
+      <div
+        className="fixed transition-all duration-500 text-xl font-bold"
+        style={{
+          transform: state === 1 ? "" : "translateX(40px)",
+          opacity: state === 1 ? 1 : 0,
+          left: p.finalHeaderPos[0],
+          top: p.finalHeaderPos[1],
+          transitionDelay: final ? '0s' : '.5s'
+        }}
+      >
+        Your Secret Recovery Phrase
+      </div>
       <div
         className="fixed flex-shrink flex flex-col transition-all duration-[.5s]"
         style={{
@@ -480,7 +498,7 @@ export function Popup(p: {
         >
           <div className="CardCyanBack inset-0 absolute z-0" />
 
-          <div
+          <div // Letter Animation
             className="relative grid gap-x-3 items-center w-full h-full"
             style={{
               gridTemplateColumns: "auto 1fr auto 1fr",
@@ -499,33 +517,47 @@ export function Popup(p: {
               "bind",
               "dove",
               "miracle",
-            ].map((word, i) => (
-              <Fragment key={i}>
-                <div
-                  className="text-cyan-200/50 whitespace-pre justify-self-end"
-                  style={
-                    {
-                      // gridColumn: (i % 6),
-                      // gridRow: Math.floor(i / 6) * 2,
-                    }
-                  }
-                >
-                  {i + 1}
-                  {/* {i + 1 < 10 ? " " : ""} */}
-                </div>
-                <div
-                  className="text-gray-200"
-                  style={
-                    {
-                      // gridColumn: (i % 6),
-                      // gridRow: Math.floor(i / 6) * 2 + 1,
-                    }
-                  }
-                >
-                  {word}
-                </div>
-              </Fragment>
-            ))}
+            ].map((word, i) => {
+              return (
+                <Fragment key={i}>
+                  <div
+                    className="text-cyan-200/50 whitespace-pre justify-self-end"
+                    style={{
+                      gridColumn: Math.floor(i / 6) * 2 + 1,
+                      gridRow: (i % 6) + 1,
+                    }}
+                  >
+                    {i + 1}
+                    {/* {i + 1 < 10 ? " " : ""} */}
+                  </div>
+                  <div
+                    className="text-gray-200 transition-all duration-500 flex flex-row"
+                    style={{
+                      // opacity: state === 1 ? 1 : 0.25,
+                      // transitionDelay: `${1.3 + i * 0.15}s`,
+                      gridColumn: Math.floor(i / 6) * 2 + 2,
+                      gridRow: (i % 6) + 1,
+                    }}
+                  >
+                    {word.split("").map((letter, j) => (
+                      <span
+                        className={twMerge(
+                          "transition-all duration-500",
+                          state !== 1 && "translate-x-4 opacity-0"
+                        )}
+                        style={{
+                          transitionDelay: `${1.3 + i * 0.1 + 0.02 * j}s`,
+                          transitionTimingFunction:
+                            "cubic-bezier(0.225, 0.460, 0.000, 1.515)",
+                        }}
+                      >
+                        {letter}
+                      </span>
+                    ))}
+                  </div>
+                </Fragment>
+              );
+            })}
           </div>
         </div>
       </div>

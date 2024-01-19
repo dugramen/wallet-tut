@@ -34,6 +34,8 @@ export default function Creating({
   const [cardLoaded, setCardLoaded] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [backupPhase, setBackupPhase] = useState(false);
+  const [wordsPhase, setWordsPhase] = useState(false)
+  const [finalHeaderRef, setFinalHeaderRef] = useState<HTMLDivElement>();
 
   type Point = { x: number; y: number };
   const randomPoints = useMemo(
@@ -76,27 +78,10 @@ export default function Creating({
     []
   );
 
-  // const [circleSpawnsPos, setCircleSpawnsPos] = useState([[0.5, 0.5]]);
-
   useEffect(() => {
     setTimeout(() => {
-      // setCircleSpawnsPos([])
       setCardLoaded(true);
     }, 2300);
-    // const interval = setInterval(() => {
-    //   if (!cardLoaded) {
-    //     setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
-    //     setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
-    //     // setCircleSpawnsPos((old) => [...old, [Math.random(), Math.random()]]);
-    //   }
-    // }, 5);
-    // setTimeout(() => {
-    //   clearInterval(interval);
-    // }, 100);
-
-    // return () => {
-    //   clearInterval(interval);
-    // };
   }, []);
 
   const gridColor = "rgb(209 213 219 / 0.5)";
@@ -125,11 +110,22 @@ export default function Creating({
           <div
             className={twMerge(
               `transition-all duration-700 text-lg translate-x-0 PanelHeader col-start-1 row-start-1 PanelContent`,
-              !cardLoaded && "translate-x-10 opacity-0"
+              (!cardLoaded || popupOpen) && "translate-x-10 opacity-0"
             )}
           >
             Your wallet is <span>ready</span>.
           </div>
+
+          {(
+            <div
+              className={twMerge(
+                "text-xl font-bold opacity-0 col-start-1 row-start-1"
+              )}
+              ref={(ref) => setFinalHeaderRef(ref ?? undefined)}
+            >
+              Your Secret Recovery Phrase
+            </div>
+          )}
         </div>
 
         <div
@@ -145,7 +141,7 @@ export default function Creating({
             // state === "entered" && "CardBorderAnimate",
           )}
           style={{
-            transition:` 
+            transition: ` 
               all .7s,
               transform .5s,
               ${popupOpen ? "opacity 0s 0s" : ""}
@@ -343,7 +339,13 @@ export default function Creating({
               width,
             }}
           >
-            <div className="text-xl font-bold">Your Secret Recovery Phrase</div>
+            <div
+              className="text-xl font-bold opacity-0"
+              ref={(ref) => setFinalHeaderRef(ref ?? undefined)}
+            >
+              Your Secret Recovery Phrase
+            </div>
+
             <div className="text-xs flex flex-row items-center gap-1">
               For your eyes only. Do not share.{" "}
               <BiInfoCircle className="text-gray-500" />
@@ -439,9 +441,19 @@ export default function Creating({
             left={cardRef?.getBoundingClientRect().left}
             right={cardRef?.getBoundingClientRect().right}
             bottom={cardRef?.getBoundingClientRect().bottom}
+            finalHeaderPos={
+              finalHeaderRef
+                ? [finalHeaderRef?.getBoundingClientRect().left, finalHeaderRef?.getBoundingClientRect().top]
+                : [0, 0]
+            }
             onClose={() => {
               setBackupPhase(true);
               // finalRef.current && setCardRef(finalRef.current)
+            }}
+            onStateChange={(s) => {
+              if (s === 1) {
+                setWordsPhase(true)
+              }
             }}
           />
         )}
@@ -450,22 +462,22 @@ export default function Creating({
   );
 }
 
-function CircleSpawn(props: { state: TransitionStatus; pos: number[] }) {
-  return (
-    <div
-      className={twMerge(
-        "absolute inset-0 transition-all duration-[1s] delay-[1.3s] ease-out bg-cyan-800"
-      )}
-      style={{
-        clipPath:
-          props.state === "entered"
-            ? `circle(50px at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`
-            : `circle(0 at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`,
-        opacity: props.state === "entered" ? "0%" : "100%",
-      }}
-    />
-  );
-}
+// function CircleSpawn(props: { state: TransitionStatus; pos: number[] }) {
+//   return (
+//     <div
+//       className={twMerge(
+//         "absolute inset-0 transition-all duration-[1s] delay-[1.3s] ease-out bg-cyan-800"
+//       )}
+//       style={{
+//         clipPath:
+//           props.state === "entered"
+//             ? `circle(50px at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`
+//             : `circle(0 at ${props.pos[0] * 100}% ${props.pos[1] * 100}%)`,
+//         opacity: props.state === "entered" ? "0%" : "100%",
+//       }}
+//     />
+//   );
+// }
 
 export function CardContent({ onClick = () => {}, className = "" }) {
   return (
