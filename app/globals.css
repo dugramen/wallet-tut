@@ -81,6 +81,15 @@ body {
   }
 }
 
+@keyframes card-border-animate {
+  0% {
+    --card-border-p: 0%;
+  }
+  100% {
+    --card-border-p: 100%;
+  }
+}
+
 .CardBorderAnimate {
   --card-border-p: 100%;
 }

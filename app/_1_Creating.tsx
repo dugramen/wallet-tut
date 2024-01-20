@@ -84,7 +84,7 @@ export default function Creating({
     }, 2300);
   }, []);
 
-  const gridColor = "rgb(209 213 219 / 0.5)";
+  const gridColor = "rgb(209 213 219 / .5)";
 
   const cardRect = cardRef?.getBoundingClientRect();
 
@@ -149,13 +149,34 @@ export default function Creating({
             ...(state === "entered" ? { height, width } : {}),
           }}
         >
-          <div
+          <RoundedGradientBorder
+            className="absolute inset-0 rounded-3xl transition-all duration-500"
+            style={{
+              // opacity: cardLoaded ? 1 : 0,
+              border: "2px solid transparent",
+              background: `
+                conic-gradient(
+                  ${gridColor}, 
+                  ${gridColor} calc(var(--card-border-p)), 
+                  transparent calc(var(--card-border-p) + 5%)
+                )
+              `,
+              animation: "card-border-animate",
+              animationDuration: "1s",
+              animationFillMode: "both",
+              // animationTimingFunction: "linear",
+              animationDelay: '.7s',
+              opacity: cardLoaded ? 0 : 1
+            }}
+          />
+
+          {/* <div
             className={twMerge(
               "w-full h-full rounded-3xl CardBorder",
               state === "entered" ? "Active" : "Inactive",
               cardLoaded && "opacity-0"
             )}
-          ></div>
+          ></div> */}
 
           <div // Grid Mask
             className="absolute inset-0 rounded-3xl"
@@ -174,13 +195,14 @@ export default function Creating({
           >
             <div // Gray Grid Bg
               className={twMerge(
-                "absolute inset-0 transition-all bg-gray-300/50 duration-700 ease-out delay-500",
+                "absolute inset-0 transition-all duration-700 ease-out delay-500",
                 cardLoaded
                   ? "opacity-0 translate-y-1 ease-linear delay-0"
                   : "opacity-100"
               )}
               style={{
                 clipPath: state === "entered" ? "circle(75%)" : "circle(0%)",
+                background: `${gridColor}`
               }}
             />
 
