@@ -4,10 +4,22 @@ import {
   FC,
   FunctionComponent,
   HTMLAttributes,
+  HTMLProps,
   ReactHTML,
   ReactNode,
   createElement,
 } from "react";
+import { htmlTagNames } from "react-tag-names";
+
+// const getHTMLProps = <T extends keyof JSX.IntrinsicElements>(elementName: T): React.HTMLProps<JSX.IntrinsicElements[T]> => {
+//   return {} as React.HTMLProps<JSX.IntrinsicElements[T]>;
+// };
+
+// // Example usage
+// const inputProps = getHTMLProps('input');
+// const divProps = getHTMLProps('div');
+// const aProps = getHTMLProps('a');
+
 
 const nojsx =
   <
@@ -20,7 +32,7 @@ const nojsx =
   ) =>
   (
     props?: T extends keyof ReactHTML
-      ? (ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement>) | null
+      ? (ClassAttributes<HTMLElement> & HTMLProps<JSX.IntrinsicElements[T]>) | null
       : T extends FunctionComponent<infer P>
       ? (Attributes & P) | null
       : null,
@@ -43,6 +55,8 @@ const zoop = nojsx(
 );
 const div = nojsx("div");
 div({});
+// const atag = nojsx("a")
+// atag({href})
 
 zoop({ smell: "2" });
 zoop({ foots: "", smell: "3" });
@@ -52,16 +66,28 @@ const Mamoswine = nojsx(function ({
   nooms = null as null | 1 | "2" | "3",
   children = undefined as any,
 }) {
-  return <></>;
+  return <>
+    <a href=""></a>
+  </>;
 });
 
-let n = (
-  Mamoswine({ hello: "there" }, [
-    Mamoswine({ nooms: "2" }, "joop")
-  ])
-);
+let n = Mamoswine({ hello: "there" }, [Mamoswine({ nooms: "2" }, "joop")]);
 let m = (
   <Mamoswine hello="there">
     <Mamoswine nooms={"2"}>joop</Mamoswine>
   </Mamoswine>
 );
+
+type HtmlNojsxMap<T extends keyof ReactHTML> = { [Key in T]: ReturnType<typeof nojsx<Key>> }
+// const els = (htmlTagNames as (keyof ReactHTML)[]).reduce((acc, val) => ({...acc, [val]: nojsx(val)}), {})
+
+export const htmlNoJsx = (htmlTagNames as (keyof ReactHTML)[]).reduce(
+  (acc, val) => ({ ...acc, [val]: nojsx(val) }),
+  {}
+) as HtmlNojsxMap<keyof ReactHTML> ;
+
+// module.exports = {...b}
+// b.div({className: ""})
+
+  
+
